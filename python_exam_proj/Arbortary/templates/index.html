@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    {% load static %}	
+    <link rel="stylesheet" href="{% static 'style3.css'%}"> 
+    <title>Arbortary</title>
+</head>
+<body>
+    <footer class="col d-flex justify-content-between">
+        <div class="col p-2">
+            <h2>Arbortary</h2>
+            <p>A site to track randomly planted trees</p>
+        </div>
+        <div class="col p-2">
+            <div class="row">
+                {% if '2' in views %}
+                <p></p>
+                {%else%}
+                <a  href="/user/account/">My Tree</a>
+                {%endif%}
+                <p>Welcome, {{user1.first_name}}</p> </div>
+            <div>
+                <form method="post">
+                    {% csrf_token %}
+                    {% if '1' in views %}
+                    <input type="submit" name="plant" value="Plant a Tree">
+                    {% else%}
+                    <input type="submit" name="Dash" value="Dashboard">
+                    {%endif%}
+                    <input type="submit" name="logout1" value="logout">
+                </form>
+            </div>
+        </div>
+    </footer>
+    {% if '1' in views %}
+    <main>
+        <div class="col-6">
+        <table class="table table-striped">
+            <tbody class="thead-dark">
+                <tr >
+                    <th scope="col"> Species</th>
+                    <th scope="col">Planted BY</th>
+                    <th scope="col">visited</th>
+                    <th scope="col"> Actions</th>
+                </tr>
+                {% for plant in plants %}
+                <tr >
+                    <th scope="col"> {{plant.Species}}</th>
+                    <th scope="col">{{plant.Planted_by.first_name}}</th>
+                    <th scope="col">{{plant.visited.all | length}}</th>
+                    <th scope="col"><a href="/show/{{plant.id}}/">details</a></th>
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+    </div>
+    </main>
+    {%endif%}
+    {% if '2' in views %}
+    <main>
+        <div class="row"><h2>Manage My Tree</h2></div>
+        <div class="col-6">
+            <table class="table table-striped .w-auto">
+                <tbody class="thead-dark ">
+                    <tr >
+                        <th scope="col"> Species</th>
+                        <th scope="col">Date Planted</th>
+                        <th scope="col"> Actions</th>
+                    </tr>
+                    {% for plant in plants %}
+                    <tr >
+                        <th scope="col"> {{plant.Species}}</th>
+                        <th scope="col">{{plant.planted_date}}</th>
+                        <th scope="col"><a href="/delete/{{plant.id}}/">delete</a> <a href="/edit/{{plant.id}}/">Edit</a></th>
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    {%endif%}
+    {% if '3' in views %}
+        <main>
+            <div class="row"><h2>Re-Plant Your Tree</h2></div>
+            <form  method="post"> 
+                {% csrf_token %}
+            <div class="col">
+                <div class="row align-items-center pt-2 pb-3">
+                    <div class="col ps-5">
+                        <h6 class="mb-0">Species</h6>
+                    </div>
+                    <div class="col pe-5">
+                        <input type="text" name ="s1" value="{{tree.Species}}" class="form-control form-control-lg" required />
+                    </div>
+                </div>
+                <div class="row align-items-center pt-2 pb-3">
+                    <div class="col ps-5">
+                        <h6 class="mb-0">Location</h6>
+                    </div>
+                    <div class="col pe-5">
+                        <input type="text" name ="l1" value="{{tree.Location}}" class="form-control form-control-lg" required/>
+                    </div>
+                </div>
+                <div class="row align-items-center pt-2 pb-3">
+                    <div class="col ps-5">
+                        <h6 class="mb-0">Reason</h6>
+                    </div>
+                    <div class="col pe-5">
+                        <input type="text" name ="r1" value="{{tree.Reason}}" class="form-control form-control-lg" required/>
+                    </div>
+                </div>
+                <div class="row align-items-center pt-2 pb-3">
+                    <div class="col ps-5">
+                        <h6 class="mb-0">Date Planted</h6>
+                    </div>
+                    <div class="col pe-5">
+                        <input type="date" name ="s1" value="{{tree.planted_date}}" class="form-control form-control-lg" required/>
+                    </div>
+                </div>
+                <div class="px-5 py-4">
+                    <input type="hidden" name="updated"value="rep">
+                    <button type="submit" name="updted" value="Updated" class="btn btn-primary btn-lg">Update</button>
+                </div>
+            </div>
+            </form>
+            <div class="col">
+            
+
+                <h1>Massages of validation</h1>
+            {% if messages %}
+                    <ul class="messages">    
+                    {% for message in messages %}    
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>    
+                    {% endfor %}
+                    </ul>
+            {% endif %}
+            </div>
+        </main>
+    {%endif%}
+    
+
+    {% if '4' in views %}
+    <main>
+        <div class="col">
+            <div class="row-2"><h4>{{tree.Species}} by {{tree.Planted_by.first_name}} {{tree.Planted_by.last_name}}</h4> </div>
+            <div class="row-2"><p>where :{{tree.Location}}</p></div>
+            <div class="row-lg-2"><p>when : {{tree.planted_date}}</p></div>
+            <div class="row-lg-2"><p>Reason :{{tree.Reason}}</p></div>
+        </div>
+        <div class="col-6">
+            <table class="table table-striped .w-auto">
+                <tbody class="thead-dark ">
+                    <tr>
+                        <th  scope="row">visitor</th>
+                    </tr>
+                    {% for visit in tree.visited.all %}
+                    <tr >
+                        
+                        <th scope="row">{{visit.first_name}}</th>
+                        
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+            <a href="/give_like/{{tree.id}}/">visit it now </a>
+        </div>
+
+        
+    </main>
+
+    {%endif%}
+    
+    {% if '5' in views %}
+    <main>
+        <div class="row"><h2>Arbitrarily Plant a Tree</h2></div>
+        <form method="post">
+            {% csrf_token %}
+        <div class="col">
+            <div class="row align-items-center pt-2 pb-3">
+                <div class="col ps-5">
+                    <h6 class="mb-0">Species</h6>
+                </div>
+                <div class="col pe-5">
+                    <input type="text" name ="s2" class="form-control form-control-lg" required/>
+                </div>
+            </div>
+            <div class="row align-items-center pt-2 pb-3">
+                <div class="col ps-5">
+                    <h6 class="mb-0">Location</h6>
+                </div>
+                <div class="col pe-5">
+                    <input type="text" name ="l2" class="form-control form-control-lg" required/>
+                </div>
+            </div>
+            <div class="row align-items-center pt-2 pb-3">
+                <div class="col ps-5">
+                    <h6 class="mb-0">Reason</h6>
+                </div>
+                <div class="col pe-5">
+                    <input type="text" name ="r2" class="form-control form-control-lg" required/>
+                </div>
+            </div>
+            <div class="row align-items-center pt-2 pb-3">
+                <div class="col ps-5">
+                    <h6 class="mb-0">Date Planted</h6>
+                </div>
+                <div class="col pe-5">
+                    <input type="date" name ="d2" class="form-control form-control-lg" required/>
+                </div>
+            </div>
+            <div class="px-5 py-4">
+                <input type="hidden" name="created"value="tree">
+                <button type="submit" name="created1" value="tree" class="btn btn-primary btn-lg">Plant</button>
+            </div>
+        </div> 
+    </form>
+    <div class="col">
+            
+
+        <h1>Massages of validation</h1>
+    {% if messages %}
+            <ul class="messages">    
+            {% for message in messages %}    
+            <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>    
+            {% endfor %}
+            </ul>
+    {% endif %}
+    </div>
+    </main>
+    
+    {%endif%}
+
+    
+    
+    <script src="{% static 'jscript.js' %}"></script>
+</body>
+</html>
